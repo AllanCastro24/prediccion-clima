@@ -1,15 +1,3 @@
-/**
- * Introduction to Neural Networks with Java, 2nd Edition
- * Copyright 2008 by Heaton Research, Inc. 
- * http://www.heatonresearch.com/books/java-neural-2/
- * 
- * ISBN13: 978-1-60439-008-7  	 
- * ISBN:   1-60439-008-5
- *   
- * This class is released under the:
- * GNU Lesser General Public License (LGPL)
- * http://www.gnu.org/copyleft/lesser.html
- */
 package com.heatonresearch.book.introneuralnet.ch9.predict;
 
 import java.text.NumberFormat;
@@ -23,22 +11,20 @@ import com.heatonresearch.book.introneuralnet.neural.feedforward.train.anneal.Ne
 import com.heatonresearch.book.introneuralnet.neural.feedforward.train.backpropagation.Backpropagation;
 import com.heatonresearch.book.introneuralnet.neural.util.ErrorCalculation;
 
-/**
- * Chapter 9: Predictive Neural Networks
- * 
- * SinWave: Use a neural network to predict the sine wave.
- * 
- * @author Jeff Heaton
- * @version 2.1
- */
 public class SinWave {
-	public final static int ACTUAL_SIZE = 500;
-	public final static int TRAINING_SIZE = 250;
-	public final static int INPUT_SIZE = 5;
-	public final static int OUTPUT_SIZE = 1;
-	public final static int NEURONS_HIDDEN_1 = 7;
-	public final static int NEURONS_HIDDEN_2 = 0;
-	public final static boolean USE_BACKPROP = true;
+	//Variables de configuración del programa
+        public final static int ACTUAL_SIZE = 525; //Cantidad de datos
+        public final static int TRAINING_SIZE = 250; //Cantidad de entrenamiento
+        public final static int INPUT_SIZE = 5; //Cantidad de neuronas de entrada
+        public final static int OUTPUT_SIZE = 1; //Cantidad de neuronas de salida
+        public final static int NEURONS_HIDDEN_1 = 7; //Cantidad de neuronas ocultas
+        public final static int NEURONS_HIDDEN_2 = 0;
+        public final static boolean USE_BACKPROP = true; //Entrenar con backpropagation
+        public static int cantidad_datos_salida = 2; //Cantidad de predicciones que necesitamos
+        public static double valor_nuevo = 0; //el valor a precedir se guarda acá
+        public static int contador_5_mandar = 0; 
+        public static int ACTUAL_SIZE_OG = ACTUAL_SIZE; //Valor actual original
+        public static int solo_calcular_1_vez = 0;
 
 	public static void main(final String args[]) {
 		final SinWave wave = new SinWave();
@@ -129,8 +115,7 @@ public class SinWave {
 	}
 
 	private void generateActual() {
-		this.actual = new ActualData(SinWave.ACTUAL_SIZE, SinWave.INPUT_SIZE,
-				SinWave.OUTPUT_SIZE);
+		this.actual = new ActualData(SinWave.ACTUAL_SIZE, SinWave.INPUT_SIZE, SinWave.OUTPUT_SIZE, SinWave.valor_nuevo, SinWave.contador_5_mandar, SinWave.ACTUAL_SIZE_OG, SinWave.cantidad_datos_salida);
 	}
 
 	private void generateTrainingSets() {
@@ -148,28 +133,10 @@ public class SinWave {
 		createNetwork();
 		generateTrainingSets();
 
-		if (SinWave.USE_BACKPROP) {
-			trainNetworkBackprop();
-		} else {
-			trainNetworkAnneal();
-		}
+                trainNetworkBackprop(); //Entrenamiento
+		
 		display();
 
-	}
-
-	private void trainNetworkAnneal() {
-		// train the neural network
-		final NeuralSimulatedAnnealing train = new NeuralSimulatedAnnealing(
-				this.network, this.input, this.ideal, 10, 2, 100);
-
-		int epoch = 1;
-
-		do {
-			train.iteration();
-			System.out.println("Iteration #" + epoch + " Error:"
-					+ train.getError());
-			epoch++;
-		} while ((train.getError() > 0.01));
 	}
 
 	private void trainNetworkBackprop() {

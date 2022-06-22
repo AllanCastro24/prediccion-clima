@@ -12,6 +12,10 @@
  */
 package com.heatonresearch.book.introneuralnet.ch9.predict;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
 /**
  * Chapter 9: Predictive Neural Networks
  * 
@@ -31,17 +35,45 @@ public class ActualData {
 	private final int inputSize;
 
 	private final int outputSize;
-
-	public ActualData(final int size, final int inputSize, final int outputSize) {
-		this.actual = new double[size];
+        private int segundo_dataset;
+	public ActualData(final int size, final int inputSize, final int outputSize, final double nuevo_valor, final int contador_5, final int size_original, final int cantidad_datos_salida) {
+                String sample = ",";
+                String mystring;
+                Double[] datos_clima = null;
+                try
+                {
+                    segundo_dataset++;
+                    
+                    BufferedReader temperatura; //Leer archivo
+                    //Los archivos deben ir en la raiz del proyecto
+                    if(segundo_dataset == 1){ //Tempeartura minima
+                        temperatura = new BufferedReader(new FileReader("temp_min.csv"));
+                    }
+                    else{ //Temperatura maxima
+                        temperatura = new BufferedReader(new FileReader("temp_max.csv"));
+                    }
+                    
+                    int i = 0;
+                    
+                    while ((mystring = temperatura.readLine()) != null){ //Leemos linea por linea el archivo
+                        String[] clima = mystring.split(sample); //Separamos por comas
+                        datos_clima[i] = Double.parseDouble(clima[0])/100;
+                        i++;
+                    }
+                    
+                    if(size > size_original){
+                        datos_clima[size-1] = nuevo_valor;
+                    }
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+            
+                //Codigo anterior NO MOVER
+                this.actual = new double[size];
 		this.inputSize = inputSize;
 		this.outputSize = outputSize;
-
-		int angle = 0;
-		for (int i = 0; i < this.actual.length; i++) {
-			this.actual[i] = sinDEG(angle);
-			angle += 10;
-		}
 	}
 
 	public void getInputData(final int offset, final double target[]) {
