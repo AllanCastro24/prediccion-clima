@@ -25,6 +25,7 @@ public class SinWave {
         public static int contador_5_mandar = 0; 
         public static int ACTUAL_SIZE_OG = ACTUAL_SIZE; //Valor actual original
         public static int solo_calcular_1_vez = 0;
+        int segundo_dataset = 0;
 
 	public static void main(final String args[]) {
 		final SinWave wave = new SinWave();
@@ -140,16 +141,29 @@ public class SinWave {
 	}
 
 	private void trainNetworkBackprop() {
-		final Train train = new Backpropagation(this.network, this.input,
+            if(solo_calcular_1_vez == 0){
+                final Train train = new Backpropagation(this.network, this.input,
 				this.ideal, 0.001, 0.1);
 
 		int epoch = 1;
+                
 
+                if(segundo_dataset == 0){
+                    System.out.println("Entrenar la primera red para predecir el valor minimo");
+                }else{
+                    System.out.println("Entrenar la segunda red para predecir el valor maximo");
+                }
 		do {
 			train.iteration();
-			System.out.println("Iteration #" + epoch + " Error:"
-					+ train.getError());
-			epoch++;
-		} while ((epoch < 5000) && (train.getError() > 0.01));
+                        if(epoch % 100 == 0){
+                            System.out.println("Iteración #" + epoch + " Error:"
+                                + train.getError());
+			}
+                        epoch++;
+		} while ((epoch < 50000) && (train.getError() > 0.00001));
+                
+                segundo_dataset++;
+                System.out.println("---------------------------------------------------------------");
+            }
 	}
 }
