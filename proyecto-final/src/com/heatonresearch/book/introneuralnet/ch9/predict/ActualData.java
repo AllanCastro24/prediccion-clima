@@ -68,9 +68,9 @@ public class ActualData {
         	BufferedReader temperatura;
         	
         	if (segundo_dataset == 1) {
-        		temperatura = new BufferedReader(new FileReader("temp_min.csv"));
+        		temperatura = new BufferedReader(new FileReader("_temp_min.csv"));
         	}else {
-            	temperatura = new BufferedReader(new FileReader("temp_max.csv"));  
+                        temperatura = new BufferedReader(new FileReader("_temp_max.csv"));  
         	}
         	
             int i = 0;
