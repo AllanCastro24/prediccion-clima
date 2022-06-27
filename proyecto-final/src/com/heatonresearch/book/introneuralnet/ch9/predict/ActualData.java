@@ -17,23 +17,13 @@ import java.io. * ;
 import java.util.Scanner;
 
 import java.io.FileReader;
-import java.io.IOException;//signals an exception of some kind has occurred
-import java.io.BufferedReader;//Reads text from a character-input stream
-//Mio
-
-/**
- * Chapter 9: Predictive Neural Networks
- * 
- * ActualData: Holds values from the sine wave.
- * 
- * @author Jeff Heaton
- * @version 2.1
- */
+import java.io.IOException;//Mostrar una excepción si 
+import java.io.BufferedReader;//Leer archivos
 
 
 public class ActualData {
 	
-	
+	//Cantidad de datos del clima (Datos a predecir)
 	public static double datos_clima[] = new double[10000];
 	
 	public static double sinDEG(final double deg) {
@@ -51,7 +41,6 @@ public class ActualData {
 	
 	public static int segundo_dataset;
 	public static double valor_minimo_predicho;
-	public static double valor_medio_predicho;
 	public static double valor_maximo_predicho;
 	
 
@@ -59,14 +48,14 @@ public class ActualData {
 			final double nuevo_valor, final int contador_5, final int size_original, final int cantidad_datos_salida){
 		
 		
-		String sample = ",";
+		String sample = ","; //Se guarda una coma para que sepa que ese es el separador
         String mystring;
         try
         {
         	segundo_dataset++;
         	
         	BufferedReader temperatura;
-        	
+        	//Leer archivos de temperatura
         	if (segundo_dataset == 1) {
         		temperatura = new BufferedReader(new FileReader("_temp_min.csv"));
         	}else {
@@ -75,9 +64,9 @@ public class ActualData {
         	
             int i = 0;
             
-            while ((mystring = temperatura.readLine()) != null)  //Reads a line of text
+            while ((mystring = temperatura.readLine()) != null)  //Leer linea por linea el archivo 
             {
-                String[] clima = mystring.split(sample);//utilized to split the string
+                String[] clima = mystring.split(sample);//Separar por comas
                     datos_clima[i] = Double.parseDouble(clima[0])/100;
                 i++;	
             }
@@ -86,16 +75,16 @@ public class ActualData {
                 datos_clima[size-1] = nuevo_valor;
             }
         }
-        catch (IOException e)//catches exception in the try block
+        catch (IOException e)//En caso que haya un error no truene el programa
         {
-            e.printStackTrace();//Prints this throwable and its backtrace
+            e.printStackTrace();//Mostrar el error sin tirar el programa
         }
 		
 		
 		this.actual = new double[size];
 		this.inputSize = inputSize;
 		this.outputSize = outputSize;
-
+                String max,min;
 
 		for (int i = 0; i < size; i++) {
 			this.actual[i] = datos_clima[i];
@@ -104,16 +93,17 @@ public class ActualData {
 
 					valor_minimo_predicho = ((int) (actual[size_original]     * 10000.0)) / 100.0;
 					valor_maximo_predicho = ((int) (actual[size_original + 1] * 10000.0)) / 100.0;
-					
-					System.out.println("Valor minimo predicho: - " + valor_minimo_predicho);
-					System.out.println("Valor maximo predicho: - " + valor_maximo_predicho);					
+					//Convertirlo a string para mostrar el valor en formato de grados centigrados
+                                        max = Double.toString(valor_maximo_predicho);
+                                        min = Double.toString(valor_minimo_predicho);
+                                        System.out.println("Valor minimo predicho: " + min.substring(0,2) +"°C");
+					System.out.println("Valor maximo predicho: " + max.substring(0,2) +"°C");
 			}
 		}
 		
 		
 		//Salir cuando se alcance los que se quieren calcular
 		if (size > size_original + cantidad_datos_salida-1) {	
-			System.out.println("Salir ActualData");
 			System.exit(0);
 		}
 		

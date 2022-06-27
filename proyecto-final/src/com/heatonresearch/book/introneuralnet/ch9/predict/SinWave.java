@@ -33,34 +33,37 @@ import com.heatonresearch.book.introneuralnet.neural.util.ErrorCalculation;
  */
 public class SinWave {
 	public static int ACTUAL_SIZE = 525; //Tama�o del Dataset
-	public static int cantidad_datos_salida = 2; //Cantidad de predicciones que debe de hacer
-	public static double valor_nuevo = 0;
-	public static int contador_5_mandar = 0;
+	public static int cantidad_datos_salida = 2; //Cantidad de predicciones que debe de hacer (Temperatura maxima y minima)
+	public static double valor_nuevo = 0; //Aqui se va a guardar el valor que se va a predecir
+	public static int contador_5_mandar = 0; //Se mandan 5 temperaturas para predecir una nueva
 	public static int ACTUAL_SIZE_OG = ACTUAL_SIZE;
 	public static int solo_calcular_1_vez = 0;
-	public final static int TRAINING_SIZE = 250;
-	public final static int INPUT_SIZE = 5;
-	public final static int OUTPUT_SIZE = 1;
-	public final static int NEURONS_HIDDEN_1 = 7;
+	public final static int TRAINING_SIZE = 250; // Con cuantos datos quieres entrenar
+	public final static int INPUT_SIZE = 5; //Neuronas de entrada
+	public final static int OUTPUT_SIZE = 1; //Neuronas de salida
+	public final static int NEURONS_HIDDEN_1 = 7; //Neuronas ocultas
 	public final static int NEURONS_HIDDEN_2 = 0;
-	public final static boolean USE_BACKPROP = true;
+	public final static boolean USE_BACKPROP = true; //Se indica que debe entrenar con back propagation
 
 	public static void main(final String args[]) {
+            //Se crea el objeto wave y se inicia el programa (El programa inicia en el método run()
 		final SinWave wave = new SinWave();
 		wave.run();
 	}
 
-	private ActualData actual;	
+        //Objeto de tipo ActualData para usar las funciones que tenga el ActualData.java
+	private ActualData actual;
+        //Arreglo para guardar las temperaturas y el valor ideal de cada predicción
 	private double input[][];
 	private double ideal[][];
-
+        //Variable entera para identificar cuando usar el dataset de temp_max y cuando el de temp_min
 	public static int segundo_dataset;
 	
 	public static double calcular_5[] = new double[1000];
 	private int contador_5 = 0;
 	private int contador_500 = 0;
 	
-	
+	//Se crea la red de tipo feedForward
 	private FeedforwardNetwork network;
 
 	public void createNetwork() {
@@ -77,7 +80,7 @@ public class SinWave {
 
 		this.network.reset();
 	}
-
+        
 	private void display() {
 		final NumberFormat percentFormat = NumberFormat.getPercentInstance();
 		percentFormat.setMinimumFractionDigits(2);
@@ -130,7 +133,6 @@ public class SinWave {
 				
 			}
 
-//			str.append(":Difference=");
 			str.append(",");
 
 			final ErrorCalculation error = new ErrorCalculation();
@@ -138,9 +140,8 @@ public class SinWave {
 			str.append(percentFormat.format(error.calculateRMS()));
 
 
-			if (i > ACTUAL_SIZE_OG - 5) { //Cambiar a -3 para que solo muestre los �ltimos
+			if (i > ACTUAL_SIZE_OG - 5) { //Cambiar a -3 para que solo muestre los ultimos
 
-//				System.out.println(str.toString()); MOSTRAR
 
 			}
 		}
@@ -183,14 +184,13 @@ public class SinWave {
 	}
 
 	public void run() {
-		
+		//Generar el actual, crear la red y los datos de entrenamiento
 		generateActual();
 		createNetwork();
 		generateTrainingSets();
-
 		//Entrenar
 		trainNetworkBackprop();
-		
+		//Mostrar datos en pantalla
 		display();
 		
 	}
@@ -214,7 +214,7 @@ public class SinWave {
 		}
 			do {
 				train.iteration();
-				if (epoch % 100 == 0) {
+				if (epoch % 100 == 0) { //Se pone %100 para que muestre de 100 en 100 las epocas
 					System.out.println("Iteration #" + epoch + " Error:"
 					+ train.getError());				
 				}
