@@ -219,7 +219,7 @@ public class SinWave {
 					+ train.getError());				
 				}
 				epoch++;
-			} while ((epoch <= 5000) && (train.getError() > 0.001));
+			} while ((epoch <= 5000) && (train.getError() > 0.0001));
 			//C�digo original
 			
 			segundo_dataset++;

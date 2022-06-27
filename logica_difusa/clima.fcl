@@ -1,0 +1,74 @@
+/*
+	Example: A tip calculation FIS (fuzzy inference system)
+	Calculates tip based on 'servie' and 'food'
+
+	If you want to about this example (and fuzzy logic), please 
+	read Matlab's tutorial on fuzzy logic toolbox 
+	http://www.mathworks.com/access/helpdesk/help/pdf_doc/fuzzy/fuzzy.pdf
+
+									Pablo Cingolani 
+									pcingola@users.sourceforge.net
+*/
+
+FUNCTION_BLOCK consejo	// Bloque de definicion
+
+VAR_INPUT				// Definir variables
+	temp_minima : REAL;
+	temp_maxima : REAL;
+END_VAR
+
+VAR_OUTPUT				// Definir salidas
+	consejo : REAL;
+END_VAR
+
+FUZZIFY temp_minima			// Entradas de logica difusa (Graficas)
+	TERM bajo :=       (-16, 0) (-12,0.75) (-8,1) (-3,1) (0,0.75)  (2,0); 
+	TERM medio_bajo := (-5, 0)  (-3,0.75) (0,1)  (2,1)  (5,0.75)  (7,0);
+	TERM medio :=      (0, 0)   (2,0.75)  (5,1)  (7,1)  (10,0.75) (12,0);
+	TERM medio_alto := (5, 0)   (7,0.75)  (10,1) (12,1) (15,0.75) (17,0);
+	TERM alto := 	   (14, 0)  (16,0.75) (18,1) (22,1) (27,0.75) (31,0);
+END_FUZZIFY
+
+FUZZIFY temp_maxima			// Entradas de logica difusa (Graficas)
+	TERM bajo :=       (9, 0) (15,0.75) (18,1) (20,1) (23,0.75) (25,0); 
+	TERM medio_bajo := (18, 0) (20,0.75) (23,1) (25,1) (28,0.75) (30,0);
+	TERM medio :=      (23, 0) (25,0.75) (28,1) (30,1) (33,0.75) (35,0);
+	TERM medio_alto := (28, 0) (30,0.75) (33,1) (35,1) (37,0.75) (40,0);
+	TERM alto := 	   (33, 0) (35,0.75) (38,1) (43,1) (47,0.75) (51,0);
+END_FUZZIFY
+
+DEFUZZIFY consejo 			// Entrada para graficar el consejo
+	TERM ropa_alta :=       (-20, 0) (-10,0.75) (-5,1) (0,1)  (5,0.75)  (10,0); 
+	TERM ropa_media_alta := ( -5, 0) (  4,0.75) ( 8,1) (12,1) (16,0.75) (25,0);
+	TERM ropa_media :=      (  5, 0) ( 14,0.75) (18,1) (22,1) (26,0.75) (35,0);
+	TERM ropa_media_baja := ( 15, 0) ( 24,0.75) (28,1) (32,1) (36,0.75) (45,0);
+	TERM poco_arropado := 	( 30, 0) ( 35,0.75) (40,1) (45,1) (50,0.75) (56,0);
+	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method
+	DEFAULT := 0;		// Default value is 0 (if no rule activates defuzzifier)
+END_DEFUZZIFY
+
+RULEBLOCK No1
+	AND : MIN;			// Use 'min' for 'and' (also implicit use 'max' for 'or' to fulfill DeMorgan's Law)
+	ACT : MIN;			// Use 'min' activation method
+	ACCU : MAX;			// Use 'max' accumulation method
+
+	RULE 1 : IF temp_minima IS bajo THEN consejo IS ropa_alta; 
+	RULE 2 : IF temp_minima IS medio_bajo THEN consejo IS ropa_media_alta; 
+	RULE 3 : IF temp_minima IS medio THEN consejo IS ropa_media; 
+	RULE 4 : IF temp_minima IS medio_alto THEN consejo IS ropa_media_baja; 
+	RULE 5 : IF temp_minima IS alto THEN consejo IS poco_arropado; 
+	
+	RULE 6 : IF temp_maxima IS bajo THEN consejo IS ropa_alta; 
+	RULE 7 : IF temp_maxima IS medio_bajo THEN consejo IS ropa_media_alta; 
+	RULE 8 : IF temp_maxima IS medio THEN consejo IS ropa_media; 
+	RULE 9 : IF temp_maxima IS medio_alto THEN consejo IS ropa_media_baja; 
+	RULE 10 : IF temp_maxima IS alto THEN consejo IS poco_arropado; 
+	
+	RULE 11 : IF temp_minima IS bajo AND temp_maxima IS alto THEN consejo IS ropa_media;
+	RULE 12 : IF temp_minima IS alto AND temp_maxima IS bajo THEN consejo IS ropa_media;
+	
+	
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK
+

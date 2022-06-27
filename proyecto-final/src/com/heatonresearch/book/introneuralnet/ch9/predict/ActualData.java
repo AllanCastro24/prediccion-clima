@@ -57,9 +57,9 @@ public class ActualData {
         	BufferedReader temperatura;
         	//Leer archivos de temperatura
         	if (segundo_dataset == 1) {
-        		temperatura = new BufferedReader(new FileReader("_temp_min.csv"));
+        		temperatura = new BufferedReader(new FileReader("_temp_max.csv"));
         	}else {
-                        temperatura = new BufferedReader(new FileReader("_temp_max.csv"));  
+                        temperatura = new BufferedReader(new FileReader("_temp_min.csv"));  
         	}
         	
             int i = 0;
@@ -91,13 +91,13 @@ public class ActualData {
 			
 			if (i == size_original +1) {
 
-					valor_minimo_predicho = ((int) (actual[size_original]     * 10000.0)) / 100.0;
-					valor_maximo_predicho = ((int) (actual[size_original + 1] * 10000.0)) / 100.0;
+					valor_maximo_predicho = ((int) (actual[size_original]     * 10000.0)) / 100.0;
+					valor_minimo_predicho = ((int) (actual[size_original + 1] * 10000.0)) / 100.0;
 					//Convertirlo a string para mostrar el valor en formato de grados centigrados
                                         max = Double.toString(valor_maximo_predicho);
                                         min = Double.toString(valor_minimo_predicho);
-                                        System.out.println("Valor minimo predicho: " + min.substring(0,2) +"°C");
-					System.out.println("Valor maximo predicho: " + max.substring(0,2) +"°C");
+                                        System.out.println("Valor minimo predicho: " + min.substring(0,4) +"°C");
+					System.out.println("Valor maximo predicho: " + max.substring(0,4) +"°C");
 			}
 		}
 		
